@@ -1,32 +1,43 @@
 /**
- * Import function triggers from their respective submodules:
- *
- * const {onCall} = require("firebase-functions/v2/https");
- * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
+ * Debate Booking System - Firebase Cloud Functions
+ * Main entry point for all backend APIs
  */
 
 const {setGlobalOptions} = require("firebase-functions");
-const {onRequest} = require("firebase-functions/https");
-const logger = require("firebase-functions/logger");
+const admin = require("firebase-admin");
 
-// For cost control, you can set the maximum number of containers that can be
-// running at the same time. This helps mitigate the impact of unexpected
-// traffic spikes by instead downgrading performance. This limit is a
-// per-function limit. You can override the limit for each function using the
-// `maxInstances` option in the function's options, e.g.
-// `onRequest({ maxInstances: 5 }, (req, res) => { ... })`.
-// NOTE: setGlobalOptions does not apply to functions using the v1 API. V1
-// functions should each use functions.runWith({ maxInstances: 10 }) instead.
-// In the v1 API, each function can only serve one request per container, so
-// this will be the maximum concurrent request count.
-setGlobalOptions({ maxInstances: 10 });
+// Initialize Firebase Admin SDK
+admin.initializeApp();
 
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
+// Set global options for cost control
+setGlobalOptions({maxInstances: 10});
 
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+// Import handlers
+const authHandlers = require("./src/handlers/auth");
+const coachHandlers = require("./src/handlers/coaches");
+const bookingHandlers = require("./src/handlers/bookings");
+const adminHandlers = require("./src/handlers/admin");
+
+// Auth Endpoints (Phase 2) ✅
+exports.signup = authHandlers.signup;
+exports.login = authHandlers.login;
+exports.getUserProfile = authHandlers.getUserProfile;
+
+// Coach Availability Endpoints (Phase 3) ✅
+exports.setAvailability = coachHandlers.setAvailability;
+exports.getAvailability = coachHandlers.getAvailability;
+exports.updateAvailability = coachHandlers.updateAvailability;
+exports.deleteAvailability = coachHandlers.deleteAvailability;
+
+// Booking Endpoints (Phase 4) ✅
+exports.createBooking = bookingHandlers.createBooking;
+exports.getMyBookings = bookingHandlers.getMyBookings;
+exports.getCoachBookings = bookingHandlers.getCoachBookings;
+exports.cancelBooking = bookingHandlers.cancelBooking;
+
+// Admin Endpoints (Phase 5) ✅
+exports.getPendingBookings = adminHandlers.getPendingBookings;
+exports.approveBooking = adminHandlers.approveBooking;
+exports.rejectBooking = adminHandlers.rejectBooking;
+exports.getBookingStats = adminHandlers.getBookingStats;
+
