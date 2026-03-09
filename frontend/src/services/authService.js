@@ -12,9 +12,13 @@ export const authService = {
         role,
         phone,
       })
+      if (!result.data.success) {
+        throw new Error(result.data.error || result.data.message || 'Signup failed')
+      }
       return result.data
     } catch (error) {
-      throw new Error(error.message)
+      const message = error.message || 'Signup failed'
+      throw new Error(message)
     }
   },
 
@@ -22,9 +26,13 @@ export const authService = {
     try {
       const login = httpsCallable(functions, 'login')
       const result = await login({ email, password })
+      if (!result.data.success) {
+        throw new Error(result.data.error || result.data.message || 'Login failed')
+      }
       return result.data
     } catch (error) {
-      throw new Error(error.message)
+      const message = error.message || 'Login failed'
+      throw new Error(message)
     }
   },
 
@@ -32,9 +40,13 @@ export const authService = {
     try {
       const getUserProfile = httpsCallable(functions, 'getUserProfile')
       const result = await getUserProfile({})
-      return result.data
+      if (!result.data.success) {
+        throw new Error(result.data.error || result.data.message || 'Failed to load profile')
+      }
+      return result.data.user
     } catch (error) {
-      throw new Error(error.message)
+      const message = error.message || 'Failed to load profile'
+      throw new Error(message)
     }
   },
 }

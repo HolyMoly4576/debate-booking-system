@@ -67,7 +67,7 @@ function SignupPage() {
 
       // Sign in with custom token
       const auth = getAuth()
-      await signInWithCustomToken(auth, result.customToken)
+      await signInWithCustomToken(auth, result.token)
 
       navigate('/dashboard')
     } catch (err) {
