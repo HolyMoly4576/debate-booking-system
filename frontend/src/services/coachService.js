@@ -9,9 +9,19 @@ export const coachService = {
         dayOfWeek,
         startTime,
         endTime,
-        durationMinutes,
+        slotDuration: durationMinutes,
       })
-      return result.data
+      if (!result.data.success) {
+        throw new Error(result.data.error || result.data.message || 'Failed to set availability')
+      }
+      // Return the newly created slot object
+      return {
+        id: result.data.availabilityId,
+        dayOfWeek,
+        startTime,
+        endTime,
+        slotDuration: durationMinutes,
+      }
     } catch (error) {
       throw new Error(error.message)
     }
@@ -24,7 +34,10 @@ export const coachService = {
         coachId,
         dayOfWeek,
       })
-      return result.data
+      if (!result.data.success) {
+        throw new Error(result.data.error || result.data.message || 'Failed to get availability')
+      }
+      return result.data.slots || []
     } catch (error) {
       throw new Error(error.message)
     }
@@ -38,8 +51,11 @@ export const coachService = {
         dayOfWeek,
         startTime,
         endTime,
-        durationMinutes,
+        slotDuration: durationMinutes,
       })
+      if (!result.data.success) {
+        throw new Error(result.data.error || result.data.message || 'Failed to update availability')
+      }
       return result.data
     } catch (error) {
       throw new Error(error.message)
@@ -52,6 +68,9 @@ export const coachService = {
       const result = await deleteAvailability({
         slotId,
       })
+      if (!result.data.success) {
+        throw new Error(result.data.error || result.data.message || 'Failed to delete availability')
+      }
       return result.data
     } catch (error) {
       throw new Error(error.message)

@@ -13,9 +13,14 @@ function ProtectedRoute({ children, requiredRole = null }) {
     return <Navigate to="/login" replace />
   }
 
-  // Check role if required
-  if (requiredRole && userProfile?.role !== requiredRole) {
-    return <Navigate to="/dashboard" replace />
+  // If role is required, wait for userProfile to load
+  if (requiredRole) {
+    if (!userProfile) {
+      return <LoadingSpinner />
+    }
+    if (userProfile.role !== requiredRole) {
+      return <Navigate to="/dashboard" replace />
+    }
   }
 
   return children
